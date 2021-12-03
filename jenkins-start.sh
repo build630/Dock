@@ -1,3 +1,4 @@
+#!/bin/bash
 
 [ "${JENKINS_HOME}" == "" ] &&
   JENKINS_HOME=/opt/jenkins/.jenkins
