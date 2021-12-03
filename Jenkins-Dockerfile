@@ -1,0 +1,24 @@
+FROM ubuntu:22.04
+
+RUN apt-get -y update
+RUN apt-get -y upgrade
+RUN apt-get install -y git curl wget openjdk-8-jdk vim lsof
+RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash && apt-get install -y git-lfs && git lfs install && rm -rf /var/lib/apt/lists/*
+
+ARG http_port=${JENKINS_PORT}
+ARG JENKINS_HOME=/opt/jenkins/.jenkins
+ARG JENKINS_VERSION
+WORKDIR ${JENKINS_HOME}/..
+
+RUN mkdir -p ${JENKINS_HOME} \
+ && cd ${JENKINS_HOME}
+RUN wget https://updates.jenkins-ci.org/download/war/$JENKINS_VERSION/jenkins.war -O  ${JENKINS_HOME}/../jenkins.war --no-check-certificate
+RUN chmod -R 775 ${JENKINS_HOME}/../
+
+COPY jenkins-start.sh ${JENKINS_HOME}/../
+
+EXPOSE ${http_port}
+
+RUN cd ${JENKINS_HOME}/..
+
+CMD /opt/jenkins/jenkins-start.sh && /bin/sh
